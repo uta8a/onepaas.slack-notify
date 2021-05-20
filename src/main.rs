@@ -1,14 +1,12 @@
 use std::{
-    fs,
+    env, fs,
     path::{Path, PathBuf},
-    env,
 };
 
 use glob::glob;
+use hyper::{header, Client, Method, Request};
 use serde_derive::Deserialize;
 use toml;
-use hyper::{Client, Method, Request, header};
-use hyper::client::HttpConnector;
 #[derive(Debug, Deserialize)]
 struct Config {
     app: App,
@@ -66,14 +64,12 @@ async fn slack(url: String, message: Vec<String>) {
         .header(header::CONTENT_TYPE, "application/json")
         .body(message.into())
         .expect("request builder creation failed");
-    let res = client.request(req).await;
-    dbg!(res);
+    let _ = client.request(req).await;
 }
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut message = vec![];
     let url = env::var("HICODER_ONEPAAS_SLACK_TOKEN")?;
-    // dbg!(&url);
     let paths = check_onepaas_config();
     if let Some(paths) = paths {
         for path in paths {
@@ -101,12 +97,14 @@ mod tests {
     fn test_toml_to_message() -> Result<(), Box<dyn std::error::Error>> {
         let paths = check_onepaas_config().expect("No toml file");
         let mut config = vec![];
-        let ans = vec![r##":white_check_mark: *NEW PUSH*
+        let ans = vec![
+            r##":white_check_mark: *NEW PUSH*
 name: sample
 URL: repo.username.hicoder.one
 type: bot/discord
 repository root: .
-"##];
+"##,
+        ];
         for path in paths {
             config.push(toml_to_message(path)?)
         }
