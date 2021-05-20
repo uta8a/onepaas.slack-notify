@@ -4,7 +4,7 @@
 通知を受けてCD(人間)が動く
 
 環境変数
-`HICODER_ONEPAAS_SLACK_TOKEN`
+`HICODER_ONEPAAS_SLACK_TOKEN`: slack incoming webhookのURLを指定(https://...)
 
 # todo
 - appがひとつにしか対応してない
