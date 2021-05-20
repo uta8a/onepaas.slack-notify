@@ -1,12 +1,14 @@
 use std::{
     fs,
     path::{Path, PathBuf},
+    env,
 };
 
 use glob::glob;
 use serde_derive::Deserialize;
 use toml;
-
+use hyper::{Client, Method, Request, header};
+use hyper::client::HttpConnector;
 #[derive(Debug, Deserialize)]
 struct Config {
     app: App,
@@ -42,7 +44,8 @@ fn toml_to_message(path: PathBuf) -> Result<String, Box<dyn std::error::Error>> 
     let raw_config = fs::read_to_string(path)?;
     let config: Config = toml::from_str(&raw_config)?;
     Ok(format!(
-        r##"name: {}
+        r##":white_check_mark: *NEW PUSH*
+name: {}
 URL: {}
 type: {}
 repository root: {}
@@ -52,18 +55,32 @@ repository root: {}
 }
 
 /// post to slack using webhook
-fn slack(message: Vec<String>) {
-    todo!()
+async fn slack(url: String, message: Vec<String>) {
+    let tls = hyper_rustls::HttpsConnector::with_native_roots();
+    let client = Client::builder().build::<_, hyper::Body>(tls);
+    let message = format!("{{text: \"{}\"}}", message[0]); // todo! multiple apps
+    dbg!(&message);
+    let req = Request::builder()
+        .method(Method::POST)
+        .uri(url)
+        .header(header::CONTENT_TYPE, "application/json")
+        .body(message.into())
+        .expect("request builder creation failed");
+    let res = client.request(req).await;
+    dbg!(res);
 }
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut message = vec![];
+    let url = env::var("HICODER_ONEPAAS_SLACK_TOKEN")?;
+    // dbg!(&url);
     let paths = check_onepaas_config();
     if let Some(paths) = paths {
         for path in paths {
             message.push(toml_to_message(path)?);
         }
     }
-    slack(message);
+    slack(url, message).await;
     Ok(())
 }
 
