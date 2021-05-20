@@ -1,0 +1,22 @@
+name: Push to GitHub Packages
+
+# リモートブランチにプッシュされたらWorkflowが起動
+on: push
+
+env:
+  IMAGE_NAME: onepaas-slack-notify
+  IMAGE_TAG: latest
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Login
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u owner --password-stdin
+      - name: Build
+        run: docker build -t docker.pkg.github.com/${{ github.repository }}/${IMAGE_NAME}:${IMAGE_TAG} --file Dockerfile .
+      - name: Push
+        run: docker push docker.pkg.github.com/${{ github.repository }}/${IMAGE_NAME}:${IMAGE_TAG}
