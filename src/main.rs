@@ -101,7 +101,8 @@ mod tests {
     fn test_toml_to_message() -> Result<(), Box<dyn std::error::Error>> {
         let paths = check_onepaas_config().expect("No toml file");
         let mut config = vec![];
-        let ans = vec![r##"name: sample
+        let ans = vec![r##":white_check_mark: *NEW PUSH*
+name: sample
 URL: repo.username.hicoder.one
 type: bot/discord
 repository root: .
