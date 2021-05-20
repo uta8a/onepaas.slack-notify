@@ -14,3 +14,8 @@
 - slackに通知投げる ここはhyperを使ってみる。
 - 環境変数でwebhook URLを指定する。
 - 使い方: cargo install path . したDocker Image -> git checkoutしてそこのディレクトリで動かす。
+
+# Action
+```
+$ docker run --rm  uta8a/onepaas-slack-notify sh -c "git clone https://test.git && cd test/ && HICODER_ONEPAAS_SLACK_TOKEN=https://.../ onepaas-slack-notify"
+```
