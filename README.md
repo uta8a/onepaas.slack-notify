@@ -1,6 +1,8 @@
 # onepaas.slack-notify
 .onepaas/workflows/*.tomlをパースして通知を投げるDocker Image
 
+通知を受けてCD(人間)が動く
+
 # todo
 - `.onepaas/workflows/*.toml` を探索
 - 読み込む ここはtomlを使う。
