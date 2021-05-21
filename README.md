@@ -3,6 +3,8 @@
 
 通知を受けてCD(人間)が動く
 
+releaseブランチにpushしたらPackage生成
+
 環境変数
 `HICODER_ONEPAAS_SLACK_TOKEN`: slack incoming webhookのURLを指定(https://...)
 
